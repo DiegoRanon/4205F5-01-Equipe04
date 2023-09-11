@@ -1,28 +1,24 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import "./MainNavigation.css"
 
 
-
-function MainNavigation(props) {
-
-  
-
-
-
+const MainNavigation = () => {
   return (
-
-    <React.Fragment>
-     {tiroirOuvert && <Backdrop onClick={fermerTiroir} />}
-      <SideDrawer show={tiroirOuvert} onClick={fermerTiroir}>
-
-      </SideDrawer> 
-
-
-      <MainHeader>  
-
-      </MainHeader>
-    </React.Fragment>
+    <nav>
+      <ul>
+        <li>
+          <Link to="/">Home</Link>
+        </li>
+        <li>
+          <Link to="/login">Login</Link>
+        </li>
+        
+        
+        
+      </ul>
+    </nav>
   );
-}
+};
 
 export default MainNavigation;
