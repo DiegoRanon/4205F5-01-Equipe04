@@ -1,0 +1,8 @@
+1. "nombreDePostesDispo:{type: String, required: true}" utiliser la méthode parseInt() et 
+manipuler la variable à chaque ajout d'un étudiant au stage.
+
+
+
+À savoir/todos : 
+1. Comment rechercher toutes les étudiants (id ou avec une méthode spécifique)
+2. login
