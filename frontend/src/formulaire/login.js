@@ -25,15 +25,15 @@ function Login(props) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            console.log("Email:", formState.inputs.email.value);
-            console.log("Mot de Passe:", formState.inputs.motdepasse.value);
+            console.log("Email:", email);
+            console.log("Mot de Passe:", motdepasse);
 
             const reponseData = await sendRequest(
                 "http://localhost:5000/etudiant/connexion",
                 "POST",
                 JSON.stringify({
-                    email: formState.inputs.email.value,
-                    motdepasse: formState.inputs.motdepasse.value,
+                    email: email,
+                    motdepasse: motdepasse,
                 }),
                 {
                     "Content-Type": "application/json",
@@ -42,7 +42,7 @@ function Login(props) {
            
             console.log(reponseData);
 
-            if (reponseData && reponseData.success) {
+            if (reponseData.success) {
                 alert("Login successful!");
             } else {
                 alert("Login failed. Please check your credentials.");
