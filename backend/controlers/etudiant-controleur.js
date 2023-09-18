@@ -23,23 +23,6 @@ const getEtudiantById = async (requete, reponse, next) => {
   reponse.json({ etudiant: etudiant.toObject({ getters: true }) });
 };
 
-const creerEtudiant = async (requete, reponse, next) => {
-    const { nom, email, motdepasse, numTel } = requete.body;
-    const nouveauEtudiant = new Etudiant({
-        nom,
-        email,
-        motdepasse,
-        numTel
-    });
-  
-    try { 
-      await nouveauEtudiant.save();
-    } catch (err) {
-      const erreur = new HttpErreur("Création de l'étudiant échouée", 500);
-      return next(erreur);
-    }
-    reponse.status(201).json({ etudiant: nouveauEtudiant });
-  };
 
 
 const updateEtudiant = async (requete, reponse, next) => {
@@ -88,33 +71,34 @@ const supprimerEtudiant = async (requete, reponse, next) => {
   };
 
 const inscription = async (requete, reponse, next) => {
-  const { nom, email, motdepasse,numTel } = requete.body;
+  const { nom, prenom, email, motdepasse, numTel } = requete.body;
 
   let etudiant;
 
   try {
-    etudiantExiste = await Etudiant.findOne({ courriel: courriel });
+    etudiantExiste = await Etudiant.findOne({ email: email });
   } catch {
-    return next(new HttpErreur("Échec vérification utilisateur existe", 500));
+    return next(new HttpErreur("Échec vérification Etudiant existe", 500));
   }
 
   if (etudiantExiste) {
     return next(
-      new HttpErreur("Utilisateur existe déjà, veuillez vos connecter", 422)
+      new HttpErreur("Etudiant existe déjà, veuillez vos connecter", 422)
     );
   }
 
-  let nouveauEtudiant = new Utilisateur({
+  let nouveauEtudiant = new Etudiant({
     nom,
+    prenom,
     email,
     numTel,
-   motdepasse
+    motdepasse
   });
   try {
     await nouveauEtudiant.save();
   } catch (err) {
     console.log(err);
-    return next(new HttpErreur("Erreur lors de l'ajout de l'utilisateur", 422));
+    return next(new HttpErreur("Erreur lors de l'ajout de l'Etudiant", 422));
   }
   reponse
     .status(201)
@@ -148,7 +132,6 @@ const inscription = async (requete, reponse, next) => {
 
 
 exports.getEtudiantById = getEtudiantById;
-exports.creerEtudiant = creerEtudiant;
 exports.updateEtudiant = updateEtudiant;
 exports.supprimerEtudiant = supprimerEtudiant;
 exports.connexion = connexion;

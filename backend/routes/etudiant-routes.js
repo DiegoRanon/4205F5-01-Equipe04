@@ -1,11 +1,11 @@
 const express = require("express");
 
-const controleursEtudiant = require("../controlers/etudiant-controleurs");
+const controleursEtudiant = require("../controlers/etudiant-controleur");
 const router = express.Router();
 
 router.get("/:etudiantId/",controleursEtudiant.getEtudiantById);
 
-router.post("/creerEtudiant",controleursEtudiant.creerEtudiant);
+router.post("/inscription",controleursEtudiant.inscription);
 
 router.patch('/:etudiantId', controleursEtudiant.updateEtudiant);
 

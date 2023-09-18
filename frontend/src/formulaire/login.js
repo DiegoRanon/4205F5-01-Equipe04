@@ -25,8 +25,6 @@ function Login(props) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            console.log("Email:", email);
-            console.log("Mot de Passe:", motdepasse);
 
             const reponseData = await sendRequest(
                 "http://localhost:5000/etudiant/connexion",
@@ -42,7 +40,9 @@ function Login(props) {
            
             console.log(reponseData);
 
-            if (reponseData.success) {
+            if (!reponseData.success) {
+                setEmail("");
+                setMotDePasse("");
                 alert("Login successful!");
             } else {
                 alert("Login failed. Please check your credentials.");
