@@ -1,21 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import NavLinks from './NavLinks';
 import "./MainNavigation.css"
 
 
 const MainNavigation = () => {
+
+  const [drawerIsOpen, setDrawerIsOpen] = useState(false);
+
+  const openDrawerHandler = () => {
+    setDrawerIsOpen(true);
+  };
+
+  const closeDrawerHandler = () => {
+    setDrawerIsOpen(false);
+  };
+  
   return (
     <nav>
       <ul>
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-        <li>
-          <Link to="/login">Login</Link>
-        </li>
-        
-        
-        
+      <NavLinks />   
       </ul>
     </nav>
   );

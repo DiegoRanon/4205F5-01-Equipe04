@@ -12,6 +12,7 @@ email:{type: String, required: true},
 motdepasse:{type: String, required: true},
 numTel:{type: String,required: true},
 posteTel:{type: String,required: true},
+listeStage:[{type: mongoose.Types.ObjectId, required: true, ref:"Stage"}]
 });
 
-module.exports = mongoose.model("employeur", employeurSchema);
+module.exports = mongoose.model("Employeur", employeurSchema);

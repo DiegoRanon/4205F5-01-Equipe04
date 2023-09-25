@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 
 const HttpErreur = require("../models/http-erreur");
 
+
 const Employeur = require("../models/employeur");
 
 
@@ -25,24 +26,41 @@ const getEmployeurById = async (requete, reponse, next) => {
 
 const creerEmployeur = async (requete, reponse, next) => {
     const { nom,prenom,nomEntreprise,adresseEntreprise, email, motdepasse, numTel,posteTel } = requete.body;
-    const nouveauEmployeur = new employeur({
-        nom,
-        prenom,
-        adresseEntreprise,
-        adresseEntreprise,
-        email,
-        motdepasse,
-        numTel,
-        posteTel
-    });
+
   
-    try { 
-      await nouveauEmployeur.save();
-    } catch (err) {A
-      const erreur = new HttpErreur("Création de l'employeur échouée", 500);
-      return next(erreur);
-    }
-    reponse.status(201).json({ employeur: nouveauEmployeur });
+
+  try {
+    employeurExiste = await Employeur.findOne({ email: email });
+  } catch {
+    return next(new HttpErreur("Échec vérification employeur existe", 500));
+  }
+
+  if (employeurExiste) {
+    return next(
+      new HttpErreur("employeur existe déjà, veuillez vos connecter", 422)
+    );
+  }
+
+  const nouveauEmployeur = new Employeur({
+    nom,
+    prenom,
+    adresseEntreprise,
+    adresseEntreprise,
+    email,
+    motdepasse,
+    numTel,
+    posteTel,
+    listeStage: []
+});
+  try {
+    await nouveauEmployeur.save();
+  } catch (err) {
+    console.log(err);
+    return next(new HttpErreur("Erreur lors de l'ajout de l'employeur", 422));
+  }
+  reponse
+    .status(201)
+    .json({ employeur: nouveauEmployeur.toObject({ getter: true }) });
   };
 
 
@@ -137,7 +155,7 @@ const inscription = async (requete, reponse, next) => {
     let employeurExiste;
   
     try {
-      employeurExiste = await employeur.findOne({ email: email });
+      employeurExiste = await Employeur.findOne({ email: email });
     } catch {
       return next(
         new HttpErreur("Connexion échouée, veuillez réessayer plus tard", 500)
@@ -154,6 +172,7 @@ const inscription = async (requete, reponse, next) => {
     });
   };
 
+  
 
 
 exports.getEmployeurById = getEmployeurById;
@@ -162,4 +181,5 @@ exports.updateEmployeur = updateEmployeur;
 exports.supprimerEmployeur = supprimerEmployeur;
 exports.connexion = connexion;
 exports.inscription = inscription;
+
 

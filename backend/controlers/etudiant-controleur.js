@@ -73,7 +73,7 @@ const supprimerEtudiant = async (requete, reponse, next) => {
 const inscription = async (requete, reponse, next) => {
   const { nom, prenom, email, motdepasse, numTel } = requete.body;
 
-  let etudiant;
+  
 
   try {
     etudiantExiste = await Etudiant.findOne({ email: email });

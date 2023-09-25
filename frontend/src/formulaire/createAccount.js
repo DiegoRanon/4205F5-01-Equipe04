@@ -3,8 +3,13 @@ import "./createAccount.css";
 import { useHttpClient } from '../shared/hooks/http-hook';
 import { useForm } from "../shared/hooks/form-hook";
 import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+
+
+   
 
 function CreateAccount(props) {
+    const history = useHistory();
     const [nom, setNom] = useState('');
     const [prenom, setPrenom] = useState('');
     const [email, setEmail] = useState('');
@@ -43,26 +48,11 @@ function CreateAccount(props) {
         false
     );
     
-  const handleOptionChange = (e) => {
-    setSelectedOption(e.target.value);
-  };
 
-
-    const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setFormData(
-            {
-                ...formState,
-                [name]: value,
-            },
-            formState.nom.isValid &&  formState.prenom.isValid && formState.email.isValid && formState.motdepasse.isValid && formState.numTel.isValid
-        );
-    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const reponseData = null;
-        console.log("Fucking " + type);
+        let reponseData = null;
         try {
            if(type == "etudiant") {
             reponseData = await sendRequest(
@@ -80,20 +70,32 @@ function CreateAccount(props) {
                 }
             );
            } else if(type == "employeur") {
-                // TODO : Connection employeur
-           } else if(type == "coordinateur") {
-                // TODO : Connection coordinateur
+
+                reponseData = await sendRequest(
+                    "http://localhost:5000/employeur/inscription",
+                    "POST",
+                    JSON.stringify({
+                        nom:nom,
+                        prenom:prenom,
+                        email: email,
+                        motdepasse: motdepasse,
+                        numTel: numTel
+                    }),
+                    {
+                        "Content-Type": "application/json",
+                    }
+                );
            } 
             
-            // console.log(reponseData);
 
-            if (reponseData.success) {
+            if (reponseData != null) {
                 alert("Creation of account succefull!");
                 setNom("");
                 setPrenom("");
                 setEmail("");
                 setNumTel("");
                 setMotDePasse("");
+                history.push('/login');
 
             } else {
                 alert("Creation of account failed. Please try again later.");
@@ -101,6 +103,7 @@ function CreateAccount(props) {
         } catch (err) {
             console.log(err);
             alert("An error occurred while attempting to creating your account.");
+           
         }
     };
     
@@ -130,20 +133,7 @@ function CreateAccount(props) {
                         <label htmlFor="password">Password</label>
                         <input type="password" id="password" name="password" value={motdepasse} onChange={(e) =>setMotDePasse(e.target.value)} required onInput={inputHandler}/>
                     </div>
-                    <div className="form-group">
-                    <label htmlFor="userType">Select User Type:</label>
-                    <select
-                        id="userType"
-                        name="userType"
-                        value={type}
-                        onChange={(e) =>setType(e.target.value)}
-                    >
-                        <option value="">Select an option</option>
-                        <option value="etudiant">Etudiant</option>
-                        <option value="employeur">Employeur</option>
-                        <option value="coordonnateur">Coordonnateur</option>
-                    </select>
-                    </div>
+                    
 
 
                      

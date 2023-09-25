@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from "../shared/hooks/http-hook";
 import { useForm } from "../shared/hooks/form-hook";
+import { AuthContext } from '../shared/context/auth-context';
+import { useHistory } from 'react-router-dom';
 
 function Login(props) {
+    const history = useHistory();
+    const auth = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [motdepasse, setMotDePasse] = useState('');
+    const [type, setType] = useState('');
 
     const { error, sendRequest, clearError } = useHttpClient();
     const [formState, inputHandler, setFormData] = useForm(
@@ -24,9 +29,10 @@ function Login(props) {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        let reponseData = null;
         try {
-
-            const reponseData = await sendRequest(
+            if(type=="etudiant") {
+            reponseData = await sendRequest(
                 "http://localhost:5000/etudiant/connexion",
                 "POST",
                 JSON.stringify({
@@ -37,19 +43,39 @@ function Login(props) {
                     "Content-Type": "application/json",
                 }
             );
+            console.log(reponseData.etudiant.email);
+            auth.login(reponseData.etudiant.id);
+            history.push('/home');
+            } else if(type=="employeur") {
+                reponseData = await sendRequest(
+                    "http://localhost:5000/employeur/connexion",
+                    "POST",
+                    JSON.stringify({
+                        email: email,
+                        motdepasse: motdepasse,
+                    }),
+                    {
+                        "Content-Type": "application/json",
+                    }
+                );
+                auth.login(reponseData.employeur.id);
+                history.push('/home');
+            }
            
             console.log(reponseData);
+            auth.login(reponseData);
 
             if (!reponseData.success) {
                 setEmail("");
                 setMotDePasse("");
                 alert("Login successful!");
+                
             } else {
                 alert("Login failed. Please check your credentials.");
             }
         } catch (err) {
             console.log(err);
-            alert("An error occurred while attempting to log in.");
+            alert("An error noccurred while attempting to log in.");
         }
     };
 
@@ -81,6 +107,17 @@ function Login(props) {
                         onInput={inputHandler}
                     />
                 </div>
+                <label htmlFor="userType">Select User Type:</label>
+                    <select
+                        id="userType"
+                        name="userType"
+                        value={type}
+                        onChange={(e) =>setType(e.target.value)}
+                    >
+                        <option value="">Select an option</option>
+                        <option value="etudiant">Etudiant</option>
+                        <option value="employeur">Employeur</option>
+                    </select>
                 <div className="form-group">
                     <button type="submit">Connexion</button>
                 </div>

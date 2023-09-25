@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 mongoose.set('strictQuery', true);
 
 const etudiantRoutes = require("./routes/etudiant-routes");
+const employeurRoutes = require("./routes/employeur-routes");
+
 
 const HttpErreur = require("./models/http-erreur");
 
@@ -19,6 +21,7 @@ app.use((requete, reponse, next) =>{
 })
 
 app.use("/etudiant/", etudiantRoutes);
+app.use("/employeur/", employeurRoutes);
 
 
 app.use((requete, reponse, next) => {
