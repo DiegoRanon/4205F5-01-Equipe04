@@ -33,7 +33,7 @@ function Login(props) {
         try {
             if(type=="etudiant") {
             reponseData = await sendRequest(
-                "http://localhost:5000/etudiant/connexion",
+                process.env.REACT_APP_BACKEND_URL + "etudiant/connexion",
                 "POST",
                 JSON.stringify({
                     email: email,
@@ -48,7 +48,7 @@ function Login(props) {
             history.push('/home');
             } else if(type=="employeur") {
                 reponseData = await sendRequest(
-                    "http://localhost:5000/employeur/connexion",
+                    process.env.REACT_APP_BACKEND_URL +"employeur/connexion",
                     "POST",
                     JSON.stringify({
                         email: email,

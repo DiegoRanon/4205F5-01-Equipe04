@@ -53,10 +53,11 @@ function CreateAccount(props) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         let reponseData = null;
+        console.log(type)
         try {
            if(type == "etudiant") {
             reponseData = await sendRequest(
-                "http://localhost:5000/etudiant/inscription",
+                process.env.REACT_APP_BACKEND_URL + "etudiant/inscription",
                 "POST",
                 JSON.stringify({
                     nom:nom,
@@ -72,7 +73,7 @@ function CreateAccount(props) {
            } else if(type == "employeur") {
 
                 reponseData = await sendRequest(
-                    "http://localhost:5000/employeur/inscription",
+                    process.env.REACT_APP_BACKEND_URL + "employeur/inscription",
                     "POST",
                     JSON.stringify({
                         nom:nom,
@@ -133,6 +134,16 @@ function CreateAccount(props) {
                         <label htmlFor="password">Password</label>
                         <input type="password" id="password" name="password" value={motdepasse} onChange={(e) =>setMotDePasse(e.target.value)} required onInput={inputHandler}/>
                     </div>
+                    <div className="form-group">
+                    <label htmlFor="type">Type d'utilisateur:</label>
+                    <select id="type" name="type" value={type} onChange={(e) =>setType(e.target.value)} required onInput={inputHandler}>
+                        <option value="etudiant">Etudiant</option>
+                        <option value="employeur">Employeur</option>
+                    </select>
+                    </div>
+                    
+
+
                     
 
 

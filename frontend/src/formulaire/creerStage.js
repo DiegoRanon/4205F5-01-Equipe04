@@ -61,7 +61,7 @@ function CreerStage() {
     let reponseData = null;
     try {
         reponseData = await sendRequest(
-        "http://localhost:5000/employeur/creerStage",
+        process.env.REACT_APP_BACKEND_URL + "employeur/creerStage",
             "POST",
             JSON.stringify({
                 nom:nom,
