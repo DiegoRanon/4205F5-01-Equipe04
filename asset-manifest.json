@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/4205F5-01-Equipe04/static/css/main.9a664023.css",
+    "main.js": "/4205F5-01-Equipe04/static/js/main.97e980ed.js",
+    "index.html": "/4205F5-01-Equipe04/index.html",
+    "main.9a664023.css.map": "/4205F5-01-Equipe04/static/css/main.9a664023.css.map",
+    "main.97e980ed.js.map": "/4205F5-01-Equipe04/static/js/main.97e980ed.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9a664023.css",
+    "static/js/main.97e980ed.js"
+  ]
+}
