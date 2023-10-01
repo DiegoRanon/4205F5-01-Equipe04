@@ -8,14 +8,17 @@ import { useHistory } from 'react-router-dom';
 
    
 
-function CreateAccount(props) {
+function CreateAccountEmployeur(props) {
     const history = useHistory();
     const [nom, setNom] = useState('');
     const [prenom, setPrenom] = useState('');
+    const [nomEntreprise, setNomEntreprise] = useState('');
+    const [adresseEntreprise, setAdresseEntreprise] = useState('');
     const [email, setEmail] = useState('');
     const [motdepasse, setMotDePasse] = useState('');
     const [numTel, setNumTel] = useState('');
-    const [type, setType] = useState('');
+    const [posteTel, setPosteNumTel] = useState('');
+    const [userType, setUserType] = useState('');
     const { error, sendRequest, clearError } = useHttpClient();
     const [selectedOption, setSelectedOption] = useState('');
     const [formState, inputHandler, setFormData] = useForm(
@@ -25,6 +28,14 @@ function CreateAccount(props) {
                 isValid:false,
             },
             prenom:{
+                value:"",
+                isValid:false,
+            },
+            nomEntreprise:{
+                value:"",
+                isValid:false,
+            },
+            adresseEntreprise:{
                 value:"",
                 isValid:false,
             },
@@ -40,7 +51,11 @@ function CreateAccount(props) {
                 value:"",
                 isValid:false,
             },
-            type: {
+            posteTel:{
+                value:"",
+                isValid:false,
+            },
+            userType: {
                 value:"",
                 isValid:false
             }
@@ -53,40 +68,28 @@ function CreateAccount(props) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         let reponseData = null;
-        console.log(type)
+        let nomComplet = nom + prenom;
+        console.log("Test : "+nomComplet+ " "+nomEntreprise+ " "+adresseEntreprise+ " "+adresseEntreprise+ " "+email+ " "+motdepasse+ " "+numTel+ " "+posteTel+ " ");
         try {
-           if(type == "etudiant") {
+           
             reponseData = await sendRequest(
-                process.env.REACT_APP_BACKEND_URL + "etudiant/inscription",
+                "http://localhost:5000/employeur/creerEmployeur",
                 "POST",
                 JSON.stringify({
-                    nom:nom,
-                    prenom:prenom,
+                    nom:nomComplet,
+                    nomEntreprise:nomEntreprise,
+                    adresseEntreprise:adresseEntreprise,
                     email: email,
                     motdepasse: motdepasse,
-                    numTel: numTel
+                    numTel: numTel,
+                    posteTel:posteTel,
+                    userType:"employeur"
                 }),
                 {
                     "Content-Type": "application/json",
                 }
             );
-           } else if(type == "employeur") {
-
-                reponseData = await sendRequest(
-                    process.env.REACT_APP_BACKEND_URL + "employeur/inscription",
-                    "POST",
-                    JSON.stringify({
-                        nom:nom,
-                        prenom:prenom,
-                        email: email,
-                        motdepasse: motdepasse,
-                        numTel: numTel
-                    }),
-                    {
-                        "Content-Type": "application/json",
-                    }
-                );
-           } 
+           
             
 
             if (reponseData != null) {
@@ -96,6 +99,7 @@ function CreateAccount(props) {
                 setEmail("");
                 setNumTel("");
                 setMotDePasse("");
+                setUserType("");
                 history.push('/login');
 
             } else {
@@ -116,7 +120,7 @@ function CreateAccount(props) {
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label htmlFor="Nom">Nom</label>
-                        <input type="text" id="nomComplet" name="nomComplet" value={nom} onChange={(e) =>setNom(e.target.value)} required onInput={inputHandler}/>
+                        <input type="text" id="nom" name="nom" value={nom} onChange={(e) =>setNom(e.target.value)} required onInput={inputHandler}/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="prenom">Prenom</label>
@@ -127,22 +131,26 @@ function CreateAccount(props) {
                         <input type="email" id="email" name="email" value={email} onChange={(e) =>setEmail(e.target.value)} required onInput={inputHandler}/>
                     </div>
                     <div className="form-group">
-                        <label htmlFor="phoneNumber">Numero de telephone</label>
+                        <label htmlFor="nomEntreprise">Nom de l'entreprise</label>
+                        <input type="text" id="nomEntreprise" name="nomEntreprise" value={nomEntreprise} onChange={(e) =>setNomEntreprise(e.target.value)} required onInput={inputHandler}/>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="adresseEntreprise">Adresse de l'entreprise</label>
+                        <input type="text" id="adresseEntreprise" name="adresseEntreprise" value={adresseEntreprise} onChange={(e) =>setAdresseEntreprise(e.target.value)} required onInput={inputHandler}/>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="numeroTelephone">Numero de telephone de l'employeur</label>
                         <input type="tel" id="numeroTelephone" name="numeroTelephone" value={numTel} onChange={(e) =>setNumTel(e.target.value)} required onInput={inputHandler}/>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="posteTel">Numero de telephone du poste</label>
+                        <input type="tel" id="posteTel" name="posteTel" value={posteTel} onChange={(e) =>setPosteNumTel(e.target.value)} required onInput={inputHandler}/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="password">Password</label>
                         <input type="password" id="password" name="password" value={motdepasse} onChange={(e) =>setMotDePasse(e.target.value)} required onInput={inputHandler}/>
-                    </div>
-                    <div className="form-group">
-                    <label htmlFor="type">Type d'utilisateur:</label>
-                    <select id="type" name="type" value={type} onChange={(e) =>setType(e.target.value)} required onInput={inputHandler}>
-                        <option value="etudiant">Etudiant</option>
-                        <option value="employeur">Employeur</option>
-                    </select>
-                    </div>
-                    
-
+                        </div>
+                 
 
                     
 
@@ -159,4 +167,4 @@ function CreateAccount(props) {
     
         }
 
-export default CreateAccount;
+export default CreateAccountEmployeur;

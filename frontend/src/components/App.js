@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 
 import "../style/App.css";
-import "../formulaire/createAccount";
 import MainNavigation from "../shared/Navigation/MainNavigation";
-import createAccount from "../formulaire/createAccount";
+import createAccountEtudiant from "../formulaire/createAccountEtudiant";
+import createAccountEmployeur from "../formulaire/createAccountEmployeur";
 import Login from "../formulaire/login";
 import listeStage from "../formulaire/listeStage";
 import Home from "../formulaire/home";
@@ -42,7 +42,8 @@ function App() {
           <Route path="/home" component={Home} />
           <Route path="/creerStage" component={CreerStage} />
           <Route path="/listeStage" component={listeStage} />
-          <Route path="/createAccount" component={createAccount} />
+          <Route path="/createAccountEtudiant" component={createAccountEtudiant} />
+          <Route path="/createAccountEmployeur" component={createAccountEmployeur} />
           <Route path="/myProfile" component={MyProfile} />
           <Route path="/login" component={Login} />
         </Switch>  

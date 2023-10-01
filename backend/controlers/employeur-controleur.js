@@ -25,7 +25,7 @@ const getEmployeurById = async (requete, reponse, next) => {
 };
 
 const creerEmployeur = async (requete, reponse, next) => {
-    const { nom,prenom,nomEntreprise,adresseEntreprise, email, motdepasse, numTel,posteTel } = requete.body;
+    const { nom,nomEntreprise,adresseEntreprise, email, motdepasse, numTel,posteTel, userType } = requete.body;
 
   
 
@@ -43,14 +43,13 @@ const creerEmployeur = async (requete, reponse, next) => {
 
   const nouveauEmployeur = new Employeur({
     nom,
-    prenom,
-    adresseEntreprise,
+    nomEntreprise,
     adresseEntreprise,
     email,
     motdepasse,
     numTel,
     posteTel,
-    listeStage: []
+    userType
 });
   try {
     await nouveauEmployeur.save();
@@ -109,44 +108,7 @@ const supprimerEmployeur = async (requete, reponse, next) => {
     reponse.status(200).json({ message: "employeur supprimée" });
   };
 
-const inscription = async (requete, reponse, next) => {
-  const { nom, prenom, email, motdepasse,numTel } = requete.body;
 
-  let employeur;
-
-  try {
-    employeurExiste = await employeur.findOne({ courriel: courriel });
-  } catch {
-    return next(new HttpErreur("Échec vérification utilisateur existe", 500));
-  }
-
-  if (employeurExiste) {
-    return next(
-      new HttpErreur("Utilisateur existe déjà, veuillez vos connecter", 422)
-    );
-  }
-
-  let nouveauEmployeur = new Utilisateur({
-    nom,
-    prenom,
-    nomEntreprise,
-    adresseEntreprise,
-    email,
-    motdepasse,
-    numTel,
-    posteTel
-   
-  });
-  try {
-    await nouveauEmployeur.save();
-  } catch (err) {
-    console.log(err);
-    return next(new HttpErreur("Erreur lors de l'ajout de l'utilisateur", 422));
-  }
-  reponse
-    .status(201)
-    .json({ employeur: nouveauEmployeur.toObject({ getter: true }) });
-};
 
 
   const connexion = async (requete, reponse, next) => {
@@ -162,14 +124,21 @@ const inscription = async (requete, reponse, next) => {
       );
     }
   
-    if (!employeurExiste || employeurExiste.motdepasse !== motdepasse) {
-      return next(new HttpErreur("Courriel ou mot de passe incorrect", 401));
-    }
-  
+   
+    if (employeurExiste != null) {
+
     reponse.json({
+      "success": true,
       message: "connexion réussie!",
       employeur: employeurExiste.toObject({ getters: true }),
     });
+  } else {
+    reponse.json({
+      "success": false,
+      message: "connexion réussie!"
+     
+    });
+  }
   };
 
   
@@ -180,6 +149,6 @@ exports.creerEmployeur = creerEmployeur;
 exports.updateEmployeur = updateEmployeur;
 exports.supprimerEmployeur = supprimerEmployeur;
 exports.connexion = connexion;
-exports.inscription = inscription;
+
 
 

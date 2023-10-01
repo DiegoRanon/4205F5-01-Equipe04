@@ -3,12 +3,14 @@ import { useHttpClient } from "../shared/hooks/http-hook";
 import { useForm } from "../shared/hooks/form-hook";
 import { AuthContext } from '../shared/context/auth-context';
 import React, { useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom'; // Importer useHistory
+import { useHistory } from 'react-router-dom'; 
+//import './liste.css';
 
 
 const ListeStage = () => {
   const auth = useContext(AuthContext);
   const employerId = auth.userId;
+  const typeUser = auth.typeUser;
   const [stages, setStages] = useState([]);
   const history = useHistory(); 
 
@@ -16,7 +18,13 @@ const ListeStage = () => {
     
     const fetchEmployerStages = async () => {
       try {
-        const response = await fetch(`/api/employer/${employerId}/stages`);
+        let response;
+        if(typeUser === 'employeur'){
+        const response = await fetch(`/employeur/${employerId}/stages`);
+        }
+        else if(typeUser === 'etudiant'){
+          const response = await fetch(`/stages/stageId`);
+        }
         const data = await response.json();
         setStages(data.stages);
       } catch (error) {
@@ -26,11 +34,11 @@ const ListeStage = () => {
 
     
     fetchEmployerStages();
-  }, [employerId]);
+  }, [employerId,typeUser]);
 
-  // Rediriger vers la page de création de stage lorsque le bouton est cliqué
+ 
   const redirectToCreateStagePage = () => {
-    history.push('/creerStage'); // Remplacez '/creer-stage' par l'URL de votre page de création de stage
+    history.push('/creerStage'); 
   };
 
   return (
@@ -44,7 +52,11 @@ const ListeStage = () => {
       ) : (
         <ul>
           {stages.map((stage) => (
-            <li key={stage.id}>{stage.nomStage}</li>
+            <li key={stage.id}>{stage.nomStage}
+            <h2>{stage.nomStage}</h2>
+              <p>Nom de l'entreprise : {stage.nomEntreprise}</p>
+              <p>Type de stage : {stage.typeStage}</p>
+              <p>Rémunération : {stage.remuneration}</p></li>
           ))}
         </ul>
       )}

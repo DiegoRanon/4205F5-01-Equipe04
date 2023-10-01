@@ -12,12 +12,12 @@ const getStages = async (requete, reponse, next) => {
   try {
     stages = await Stage.find({}, "-motDePasse");
   } catch {
-    return next(new HttpErreur("Erreur accès etudiant"), 500);
+    return next(new HttpErreur("Erreur accès stage"), 500);
   }
 
   reponse.json({
-    stages: stages.map((etudiant) =>
-      etudiant.toObject({ getters: true })
+    stages: stages.map((stages) =>
+      stages.toObject({ getters: true })
     ),
   });
 };
@@ -27,6 +27,20 @@ const getStageById = async (requete, reponse, next) => {
   let stage;
   try {
     stage = await Stage.findById(stageId);
+  } catch (err) {
+    return next(new HttpErreur("Erreur lors de la récupération du stage", 500));
+  }
+  if (!stage) {
+    return next(new HttpErreur("Aucun stage trouvée pour l'id fourni", 404));
+  }
+  reponse.json({ stage: stage.toObject({ getters: true }) });
+};
+
+const getStageByCreateur = async (requete, reponse, next) => {
+  const employeurId = requete.params.employeurId;
+  let stage;
+  try {
+    stage = await Stage.findById({}, "-createur");
   } catch (err) {
     return next(new HttpErreur("Erreur lors de la récupération du stage", 500));
   }
@@ -49,8 +63,10 @@ const creerStage = async (requete, reponse, next) => {
     typeStage,
     nombreDePostesDispo,
     descriptionStage,
-    remuneration
+    remuneration,
+    createur
   } = requete.body;
+
   const nouveauStage = new Stage({
     nom,
     courriel,
@@ -61,6 +77,7 @@ const creerStage = async (requete, reponse, next) => {
     nombreDePostesDispo,
     descriptionStage,
     remuneration,
+    createur,
     etudiants:[]
   });
 

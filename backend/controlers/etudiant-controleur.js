@@ -5,11 +5,13 @@ const { v4: uuidv4 } = require("uuid");
 const HttpErreur = require("../models/http-erreur");
 
 const Etudiant = require("../models/etudiant");
+const etudiant = require("../models/etudiant");
 
 
 const getEtudiantById = async (requete, reponse, next) => {
   const etudiantId = requete.params.etudiantId;
   let etudiant;
+  console.log("get");
   try {
     etudiant = await Etudiant.findById(etudiantId);
   } catch (err) {
@@ -18,10 +20,13 @@ const getEtudiantById = async (requete, reponse, next) => {
     );
   }
   if (!etudiant) {
+    console.error("Erreur lors de la récupération de l'étudiant(e):", err);
     return next(new HttpErreur("Aucun(e) etudiant(e) trouvée pour l'id fourni", 404));
   }
   reponse.json({ etudiant: etudiant.toObject({ getters: true }) });
 };
+
+
 
 
 
@@ -47,33 +52,33 @@ const updateEtudiant = async (requete, reponse, next) => {
 };
 
 const supprimerEtudiant = async (requete, reponse, next) => {
-    const etudiantId = requete.params.etudiantId;
-    let etudiant;
-    try {
-      etudiant = await Etudiant.findById(etudiantId);
-    } catch {
-      return next(
-        new HttpErreur("Erreur lors de la suppression de la etudiant", 500)
-      );
-    }
-    if(!etudiant){
-      return next(new HttpErreur("Impossible de trouver l'etudiant", 404));
-    }
-  
-    try{
-      await etudiant.remove();
-    }catch{
-      return next(
-        new HttpErreur("Erreur lors de la suppression de la etudiant", 500)
-      );
-    }
-    reponse.status(200).json({ message: "etudiant supprimée" });
-  };
+  const etudiantId = requete.params.etudiantId;
+  let etudiant;
+  try {
+    etudiant = await Etudiant.findById(etudiantId);
+  } catch {
+    return next(
+      new HttpErreur("Erreur lors de la suppression de la etudiant", 500)
+    );
+  }
+  if (!etudiant) {
+    return next(new HttpErreur("Impossible de trouver l'etudiant", 404));
+  }
+
+  try {
+    await etudiant.remove();
+  } catch {
+    return next(
+      new HttpErreur("Erreur lors de la suppression de la etudiant", 500)
+    );
+  }
+  reponse.status(200).json({ message: "etudiant supprimée" });
+};
 
 const inscription = async (requete, reponse, next) => {
-  const { nom, prenom, email, motdepasse, numTel } = requete.body;
+  const { nom, email, motdepasse, numTel, userType } = requete.body;
 
-  
+
 
   try {
     etudiantExiste = await Etudiant.findOne({ email: email });
@@ -89,10 +94,10 @@ const inscription = async (requete, reponse, next) => {
 
   let nouveauEtudiant = new Etudiant({
     nom,
-    prenom,
     email,
     numTel,
-    motdepasse
+    motdepasse,
+    userType
   });
   try {
     await nouveauEtudiant.save();
@@ -106,28 +111,34 @@ const inscription = async (requete, reponse, next) => {
 };
 
 
-  const connexion = async (requete, reponse, next) => {
-    const { email, motdepasse } = requete.body;
-  
-    let etudiantExiste;
-  
-    try {
-      etudiantExiste = await Etudiant.findOne({ email: email });
-    } catch {
-      return next(
-        new HttpErreur("Connexion échouée, veuillez réessayer plus tard", 500)
-      );
-    }
-  
-    if (!etudiantExiste || etudiantExiste.motdepasse !== motdepasse) {
-      return next(new HttpErreur("Courriel ou mot de passe incorrect", 401));
-    }
-  
+const connexion = async (requete, reponse, next) => {
+  const { email, motdepasse } = requete.body;
+
+  let etudiantExiste;
+
+  try {
+    etudiantExiste = await Etudiant.findOne({ email: email, motdepasse: motdepasse });
+  } catch {
+    return next(
+      new HttpErreur("Connexion échouée, veuillez réessayer plus tard", 404)
+    );
+  }
+
+  if (etudiantExiste != null) {
+
     reponse.json({
+      "success": true,
       message: "connexion réussie!",
       etudiant: etudiantExiste.toObject({ getters: true }),
     });
-  };
+  } else {
+    reponse.json({
+      "success": false,
+      message: "connexion échoué!"
+    });
+
+  }
+};
 
 
 
@@ -136,4 +147,5 @@ exports.updateEtudiant = updateEtudiant;
 exports.supprimerEtudiant = supprimerEtudiant;
 exports.connexion = connexion;
 exports.inscription = inscription;
+
 

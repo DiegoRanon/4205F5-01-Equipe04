@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from "../shared/hooks/http-hook";
 import { useForm } from "../shared/hooks/form-hook";
+import { AuthContext } from '../shared/context/auth-context';
 import "./creerStage.css";
 
 
 
 function CreerStage() {
+  const auth = useContext(AuthContext);
+  const userId = auth.userId;
   const [nom, setNom] = useState('');
-  const [courriel, setCourriel] = useState('');
+  const [email, setEmail] = useState('');
   const [numeroTel, setNumeroTel] = useState('');
   const [nomEntreprise, setNomEntreprise] = useState('');
   const [adresseEntreprise, setAdresseEntreprise] = useState('');
@@ -23,7 +26,7 @@ function CreerStage() {
             value: "",
             isValid: false,
         },
-        courriel: {
+        email: {
             value: "",
             isValid: false,
         },
@@ -59,19 +62,25 @@ function CreerStage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     let reponseData = null;
+    console.log(process.env.REACT_APP_BACKEND_URL);
+    console.log(nom + " "+ email + " " + numeroTel + " "+nomEntreprise+" "+adresseEntreprise+" "+typeStage+" "+descriptionStage+" "+remuneration);
     try {
         reponseData = await sendRequest(
-        process.env.REACT_APP_BACKEND_URL + "employeur/creerStage",
+        "http://localhost:5000/stage/ajouterStage",
             "POST",
             JSON.stringify({
                 nom:nom,
-                courriel:courriel,
+                courriel:email,
                 numeroTel:numeroTel,
                 nomEntreprise:nomEntreprise,
                 adresseEntreprise:adresseEntreprise,
                 typeStage:typeStage,
                 descriptionStage:descriptionStage,
                 remuneration:remuneration,
+                createur:userId
+
+                
+                
       }),
       {
         "Content-Type": "application/json",
@@ -80,7 +89,7 @@ function CreerStage() {
 
       if(reponseData != null){
         setNom('');
-        setCourriel('');
+        setEmail('');
         setNumeroTel('');
         setNomEntreprise('');
         setAdresseEntreprise('');
@@ -89,6 +98,9 @@ function CreerStage() {
         setRemuneration('');
 
       alert('Le stage a été créé avec succès !');
+
+      
+
 
     } else{
         alert("Creation de stage pas reussi. Veuiller reessayer.")
@@ -115,15 +127,16 @@ function CreerStage() {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="courriel">Courriel</label>
+        <label htmlFor="email">email</label>
         <input
-          type="email"
-          id="courriel"
-          name="courriel"
-          value={courriel}
-          onChange={(e) =>setCourriel(e.target.courriel)}
-          required
-        />
+        type="email"
+        id="email"
+        name="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+
       </div>
       <div className="form-group">
         <label htmlFor="numeroTel">Numero de téléphone</label>

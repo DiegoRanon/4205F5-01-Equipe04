@@ -7,7 +7,7 @@ router.get("/:stageId", controleursStage.getStageById);
 
 router.get("/", controleursStage.getStages)
 
-router.post('/ajouterStage', controleursStage.creerStage);
+router.post('/ajouterStage/:employeurId', controleursStage.creerStage);
 
 router.patch('/:stageId', controleursStage.updateStage);
 

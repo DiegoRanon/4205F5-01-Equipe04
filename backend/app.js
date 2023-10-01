@@ -5,6 +5,7 @@ mongoose.set('strictQuery', true);
 
 const etudiantRoutes = require("./routes/etudiant-routes");
 const employeurRoutes = require("./routes/employeur-routes");
+const stageRoutes = require("./routes/stage-routes")
 
 
 const HttpErreur = require("./models/http-erreur");
@@ -22,6 +23,7 @@ app.use((requete, reponse, next) =>{
 
 app.use("/etudiant/", etudiantRoutes);
 app.use("/employeur/", employeurRoutes);
+app.use("/stage/", stageRoutes);
 
 
 app.use((requete, reponse, next) => {
@@ -39,7 +41,7 @@ app.use((error, requete, reponse, next) => {
 });
 
 mongoose
-.connect(`mongodb://127.0.0.1:27017`)
+.connect("mongodb://127.0.0.1:27017")
 .then(() => {
     app.listen(5000)
     console.log("Connexion à la base de données réussie");

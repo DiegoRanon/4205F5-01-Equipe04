@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
 
-const Stage = mongoose.stage;
+const Schema = mongoose.Schema;
 
-const schemaStage = new Stage({
+const schemaStage = new Schema({
     nom:{type: String, required: true},
     courriel: {type: String, required: true},
     numeroTel: {type: String, required: true},
@@ -12,6 +12,7 @@ const schemaStage = new Stage({
     typeStage:{type: String, required: true},
     descriptionStage:{type: String, required: true},
     remuneration:{type: String, required: true},
+    createur:{type: mongoose.Types.ObjectId, required: true, ref:"Employeur"},
     etudiants:[{type: mongoose.Types.ObjectId, required: true, ref:"Etudiant"}]
 
 });
