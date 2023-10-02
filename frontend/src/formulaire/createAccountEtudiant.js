@@ -66,7 +66,7 @@ function CreateAccountEtudiant(props) {
         try {
            
             reponseData = await sendRequest(
-                "http://localhost:5000/etudiant/inscription",
+                process.env.REACT_APP_BACKEND_URL + "etudiant/inscription",
                 "POST",
                 JSON.stringify({
                     nom:nomComplet,

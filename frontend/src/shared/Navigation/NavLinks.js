@@ -19,11 +19,13 @@ function NavLinks(props) {
   useEffect(() => {
     const fetchUtilisateur = async () => {
       try {
-        const reponseData = await sendRequest(`http://localhost:5000/etudiant/${userId}`);
+
+      
+        const reponseData = await sendRequest(process.env.REACT_APP_BACKEND_URL + `etudiant/${userId}`);
         if (reponseData.success) {
           setUserType(reponseData.etudiant.userType);
         } else {
-          const reponseData = await sendRequest(`http://localhost:5000/employeur/${userId}`);
+          const reponseData = await sendRequest(process.env.REACT_APP_BACKEND_URL + `employeur/${userId}`);
           if (reponseData.success) {
             setUserType(reponseData.employeur.userType);
           }
@@ -37,6 +39,7 @@ function NavLinks(props) {
       fetchUtilisateur();
     }
   }, [auth.isLoggedIn, userId, sendRequest]);
+
 
 
   const deconnection = async () => {

@@ -75,7 +75,7 @@ function MyProfile(props) {
       access = true;
       console.log("access = true")
       try {
-        const reponseData = await sendRequest(`http://localhost:5000/etudiant/${userId}`);
+        const reponseData = await sendRequest(process.env.REACT_APP_BACKEND_URL +`etudiant/${userId}`);
         if (reponseData.success) {
           console.log("Profile Étudiant");
           setEtudiant(true);
@@ -88,7 +88,7 @@ function MyProfile(props) {
           
           
         } else {
-          const reponseData = await sendRequest(`http://localhost:5000/employeur/${userId}`);
+          const reponseData = await sendRequest(process.env.REACT_APP_BACKEND_URL +`employeur/${userId}`);
           if (reponseData.success) {
             console.log("Profile Employeur");
             setEmployeur(true);
@@ -120,7 +120,7 @@ function MyProfile(props) {
     try {
       if(etudiant) {
       reponseData = await sendRequest(
-        `http://localhost:5000/etudiant/${userId}`,
+        process.env.REACT_APP_BACKEND_URL +`etudiant/${userId}`,
         "PATCH",
         JSON.stringify({
             nom:nom,
@@ -134,7 +134,7 @@ function MyProfile(props) {
     );
       } else {
         reponseData = await sendRequest(
-          `http://localhost:5000/employeur/${userId}`,
+          process.env.REACT_APP_BACKEND_URL +`employeur/${userId}`,
           "PATCH",
           JSON.stringify({
               nom:nom,

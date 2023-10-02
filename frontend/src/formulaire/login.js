@@ -1,4 +1,4 @@
-import React, { useState,useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useHttpClient } from "../shared/hooks/http-hook";
 import { useForm } from "../shared/hooks/form-hook";
@@ -35,7 +35,7 @@ function Login(props) {
         try {
             // Essayer en tant qu'étudiant
             reponseData = await sendRequest(
-                "http://localhost:5000/etudiant/connexion",
+                process.env.REACT_APP_BACKEND_URL +"etudiant/connexion",
                 "POST",
                 JSON.stringify({
                     email: email,
@@ -45,18 +45,15 @@ function Login(props) {
                     "Content-Type": "application/json",
                 }
             );
-            
-            
-
             if (reponseData.success) {
 
                 console.log("Connecter en tant qu'etudiant")
                 history.push('/home');
                 auth.login(reponseData.etudiant.id);
             } else {
-                // Essayer en tant qu'employer
+                // Essayer en tant qu'employeur
                 reponseData = await sendRequest(
-                    "http://localhost:5000/employeur/connexion",
+                    process.env.REACT_APP_BACKEND_URL+"/employeur/connexion",
                     "POST",
                     JSON.stringify({
                         email: email,
@@ -68,19 +65,13 @@ function Login(props) {
                 );
 
                 if (reponseData.success) {
-                auth.login(reponseData.employeur.id);
-                history.push('/home');
+                    auth.login(reponseData.employeur.id);
+                    history.push('/home');
                 }  else {
                     alert("Compte inexistant.");
                 }
             }
-            
-               
-            console.log(reponseData);
-            
-
-            
-        } catch (err) {
+           } catch (err) {
             console.log(err);
             alert("An error noccurred while attempting to log in.");
         }

@@ -22,13 +22,13 @@ const ListeStage = () => {
   useEffect(() => {
     const fetchUtilisateur = async () => {
       try {
-        const reponseData = await sendRequest(`http://localhost:5000/etudiant/${userId}`);
+        const reponseData = await sendRequest(process.env.REACT_APP_BACKEND_URL +`  etudiant/${userId}`);
         if (reponseData.success) {
           setUserType(reponseData.etudiant.userType);
         } else {
-          const reponseData = await sendRequest(`http://localhost:5000/employeur/${userId}`);
+          const reponseData = await sendRequest(process.env.REACT_APP_BACKEND_URL +`  employeur/${userId}`);
           if (reponseData.success) {
-            setUserType(reponseData.employeur.userType);
+            setUserType(reponseData.employeur.userType); ``
           }
         }
       } catch (err) {
@@ -45,7 +45,7 @@ const ListeStage = () => {
       const fetchEmployerStages = async () => {
         try {
           console.log("intérieur Employeur")
-          const reponseData = await sendRequest(`http://localhost:5000/stage/getStages/${userId}`);
+          const reponseData = await sendRequest(process.env.REACT_APP_BACKEND_URL +`  stage/getStages/${userId}`);
           console.log(reponseData.stages.length);
           setStages(reponseData.stages);
 
@@ -64,7 +64,7 @@ const ListeStage = () => {
       const fetchEtudiantStages = async () => {
         try {
           console.log("intérieur étudiant")
-          const reponseData = await sendRequest(`http://localhost:5000/stage/`);
+          const reponseData = await sendRequest(process.env.REACT_APP_BACKEND_URL +`  stage/`);
           console.log(reponseData.stages.length);
           setStages(reponseData.stages);
           console.log("setted");
