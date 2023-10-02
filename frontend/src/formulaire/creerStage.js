@@ -65,7 +65,8 @@ function CreerStage() {
     console.log(process.env.REACT_APP_BACKEND_URL);
     console.log(nom + " "+ email + " " + numeroTel + " "+nomEntreprise+" "+adresseEntreprise+" "+typeStage+" "+descriptionStage+" "+remuneration);
     try {
-        reponseData = await sendRequest(
+        
+      reponseData = await sendRequest(
         "http://localhost:5000/stage/ajouterStage",
             "POST",
             JSON.stringify({
@@ -77,17 +78,14 @@ function CreerStage() {
                 typeStage:typeStage,
                 descriptionStage:descriptionStage,
                 remuneration:remuneration,
-                createur:userId
-
-                
-                
+                createur:userId        
       }),
       {
         "Content-Type": "application/json",
       }
         );
 
-      if(reponseData != null){
+      if(reponseData.success){
         setNom('');
         setEmail('');
         setNumeroTel('');
@@ -127,7 +125,7 @@ function CreerStage() {
         />
       </div>
       <div className="form-group">
-        <label htmlFor="email">email</label>
+        <label htmlFor="email">Email</label>
         <input
         type="email"
         id="email"

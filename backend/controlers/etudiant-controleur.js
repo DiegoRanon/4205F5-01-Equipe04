@@ -5,7 +5,6 @@ const { v4: uuidv4 } = require("uuid");
 const HttpErreur = require("../models/http-erreur");
 
 const Etudiant = require("../models/etudiant");
-const etudiant = require("../models/etudiant");
 
 
 const getEtudiantById = async (requete, reponse, next) => {
@@ -19,11 +18,14 @@ const getEtudiantById = async (requete, reponse, next) => {
       new HttpErreur("Erreur lors de la récupération de l'étudiant(e)", 500)
     );
   }
-  if (!etudiant) {
-    console.error("Erreur lors de la récupération de l'étudiant(e):", err);
-    return next(new HttpErreur("Aucun(e) etudiant(e) trouvée pour l'id fourni", 404));
+  if(etudiant != null) {
+  reponse.json({ 
+    "success": true,
+    etudiant: etudiant.toObject({ getters: true }) });
+  } else {
+    reponse.json({ 
+      "success": false});
   }
-  reponse.json({ etudiant: etudiant.toObject({ getters: true }) });
 };
 
 
@@ -31,13 +33,14 @@ const getEtudiantById = async (requete, reponse, next) => {
 
 
 const updateEtudiant = async (requete, reponse, next) => {
-  const { email, motdepasse, numTel } = requete.body;
+  const { nom, email, motdepasse, numTel} = requete.body;
   const etudiantId = requete.params.etudiantId;
 
   let etudiant;
 
   try {
     etudiant = await Etudiant.findById(etudiantId);
+    etudiant.nom = nom;
     etudiant.email = email;
     etudiant.motdepasse = motdepasse;
     etudiant.numTel = numTel;

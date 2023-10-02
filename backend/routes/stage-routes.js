@@ -5,9 +5,11 @@ const router = express.Router();
 
 router.get("/:stageId", controleursStage.getStageById);
 
+router.get("/getStages/:employeurId", controleursStage.getStageByCreateur);
+
 router.get("/", controleursStage.getStages)
 
-router.post('/ajouterStage/:employeurId', controleursStage.creerStage);
+router.post('/ajouterStage', controleursStage.creerStage);
 
 router.patch('/:stageId', controleursStage.updateStage);
 

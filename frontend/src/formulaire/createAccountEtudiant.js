@@ -18,6 +18,7 @@ function CreateAccountEtudiant(props) {
     const [userType, setUserType] = useState('');
     const { error, sendRequest, clearError } = useHttpClient();
     const [selectedOption, setSelectedOption] = useState('');
+    const [isValid, setIsValid] = useState(true);
     const [formState, inputHandler, setFormData] = useForm(
         {
             nom:{
@@ -47,14 +48,21 @@ function CreateAccountEtudiant(props) {
         },
         false
     );
+    const inputHandlerPhone = (e) => {
+        const phoneNumberPattern = /^\d{10}$/; 
     
+        const inputPhoneNumber = e.target.value;
+        const isPhoneNumberValid = phoneNumberPattern.test(inputPhoneNumber);
+    
+        setIsValid(isPhoneNumberValid);
+        setNumTel(inputPhoneNumber);
+      };
 
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         let reponseData = null;
-        let nomComplet = nom + prenom;
-        console.log('Selected type: ', userType);
+        let nomComplet = nom +" "+ prenom;
         try {
            
             reponseData = await sendRequest(
@@ -114,18 +122,15 @@ function CreateAccountEtudiant(props) {
                     </div>
                     <div className="form-group">
                         <label htmlFor="phoneNumber">Numero de telephone</label>
-                        <input type="tel" id="numeroTelephone" name="numeroTelephone" value={numTel} onChange={(e) =>setNumTel(e.target.value)} required onInput={inputHandler}/>
+                        <input type="tel" id="numeroTelephone" name="numeroTelephone" value={numTel} onChange={(e) =>setNumTel(e.target.value)} required onInput={inputHandlerPhone}/>
+                        {!isValid && (
+        <p style={{ color: 'red' }}>Please enter a valid 10-digit phone number.</p>
+      )}
                     </div>
                     <div className="form-group">
                         <label htmlFor="password">Password</label>
                         <input type="password" id="password" name="password" value={motdepasse} onChange={(e) =>setMotDePasse(e.target.value)} required onInput={inputHandler}/>
                         </div>
-                 
-
-                    
-
-
-                     
                     <div className="form-group">
                         <button type="submit">Creer un compte</button>
                     </div>

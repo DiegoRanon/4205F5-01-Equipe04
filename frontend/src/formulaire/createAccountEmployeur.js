@@ -21,6 +21,7 @@ function CreateAccountEmployeur(props) {
     const [userType, setUserType] = useState('');
     const { error, sendRequest, clearError } = useHttpClient();
     const [selectedOption, setSelectedOption] = useState('');
+    const [isValid, setIsValid] = useState(true);
     const [formState, inputHandler, setFormData] = useForm(
         {
             nom:{
@@ -54,6 +55,7 @@ function CreateAccountEmployeur(props) {
             posteTel:{
                 value:"",
                 isValid:false,
+                setIsValid:false,
             },
             userType: {
                 value:"",
@@ -63,12 +65,20 @@ function CreateAccountEmployeur(props) {
         false
     );
     
-
+    const inputHandlerPhone = (e) => {
+        const phoneNumberPattern = /^\d{10}$/; 
+    
+        const inputPhoneNumber = e.target.value;
+        const isPhoneNumberValid = phoneNumberPattern.test(inputPhoneNumber);
+    
+        setIsValid(isPhoneNumberValid);
+        setNumTel(inputPhoneNumber);
+      };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         let reponseData = null;
-        let nomComplet = nom + prenom;
+        let nomComplet = nom +" "+ prenom;
         console.log("Test : "+nomComplet+ " "+nomEntreprise+ " "+adresseEntreprise+ " "+adresseEntreprise+ " "+email+ " "+motdepasse+ " "+numTel+ " "+posteTel+ " ");
         try {
            
@@ -140,7 +150,10 @@ function CreateAccountEmployeur(props) {
                     </div>
                     <div className="form-group">
                         <label htmlFor="numeroTelephone">Numero de telephone de l'employeur</label>
-                        <input type="tel" id="numeroTelephone" name="numeroTelephone" value={numTel} onChange={(e) =>setNumTel(e.target.value)} required onInput={inputHandler}/>
+                        <input type="tel" id="numeroTelephone" name="numeroTelephone" value={numTel} onChange={(e) =>setNumTel(e.target.value)} required onInput={inputHandlerPhone}/>
+                        {!isValid && (
+        <p style={{ color: 'red' }}>Veuiller entrez un numero a 10 chiffres.</p>
+      )}
                     </div>
                     <div className="form-group">
                         <label htmlFor="posteTel">Numero de telephone du poste</label>

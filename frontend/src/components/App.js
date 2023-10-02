@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'; 
 
 
@@ -16,11 +16,14 @@ import { AuthContext } from "../shared/context/auth-context";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userId, setUserId] = useState(false);
+  const [userId, setUserId] = useState();
+  const auth = useContext(AuthContext);
 
   const login = useCallback((userId) => {
+    console.log(userId)
     setIsLoggedIn(true);
     setUserId(userId);
+    auth.updateUserId(userId);
   }, []);
 
   const logout = useCallback(() => {

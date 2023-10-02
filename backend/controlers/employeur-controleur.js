@@ -12,16 +12,18 @@ const getEmployeurById = async (requete, reponse, next) => {
   const employeurId = requete.params.employeurId;
   let employeur;
   try {
-    employeur = await employeur.findById(employeurId);
+    employeur = await Employeur.findById(employeurId);
   } catch (err) {
     return next(
       new HttpErreur("Erreur lors de la récupération de l'employeur(e)", 500)
     );
   }
-  if (!employeur) {
-    return next(new HttpErreur("Aucun(e) employeur(e) trouvée pour l'id fourni", 404));
+  if(employeur != null) {
+  reponse.json({ "success": true,
+    employeur: employeur.toObject({ getters: true }) });
+  } else {
+    reponse.json({ "success": false});
   }
-  reponse.json({ employeur: employeur.toObject({ getters: true }) });
 };
 
 const creerEmployeur = async (requete, reponse, next) => {
@@ -64,16 +66,20 @@ const creerEmployeur = async (requete, reponse, next) => {
 
 
 const updateEmployeur = async (requete, reponse, next) => {
-  const { email, motdepasse, numTel,stagesCreer } = requete.body;
+  const { nom, nomEntreprise, adresseEntreprise, email, motdepasse, numTel, posteTel } = requete.body;
   const employeurId = requete.params.employeurId;
 
   let employeur;
 
   try {
     employeur = await employeur.findById(employeurId);
+    employeur.nom = nom;
+    employeur.nomEntreprise = nomEntreprise;
+    employeur.adresseEntreprise = adresseEntreprise;
     employeur.email = email;
     employeur.motdepasse = motdepasse;
     employeur.numTel = numTel;
+    employeur.posteTel = posteTel;
     await employeur.save();
   } catch {
     return next(

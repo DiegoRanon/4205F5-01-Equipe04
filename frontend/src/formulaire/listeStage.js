@@ -3,43 +3,87 @@ import { useHttpClient } from "../shared/hooks/http-hook";
 import { useForm } from "../shared/hooks/form-hook";
 import { AuthContext } from '../shared/context/auth-context';
 import React, { useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom'; 
-//import './liste.css';
+import { useHistory } from 'react-router-dom';
+
+import style from './liste.css';
 
 
 const ListeStage = () => {
+  const { error, sendRequest, clearError } = useHttpClient();
   const auth = useContext(AuthContext);
-  const employerId = auth.userId;
+  const userId = auth.userId;
   const typeUser = auth.typeUser;
   const [stages, setStages] = useState([]);
-  const history = useHistory(); 
+  const [userType, setUserType] = useState("");
+  const history = useHistory();
+
+  let utilisateur;
 
   useEffect(() => {
-    
-    const fetchEmployerStages = async () => {
+    const fetchUtilisateur = async () => {
       try {
-        let response;
-        if(typeUser === 'employeur'){
-        const response = await fetch(`/employeur/${employerId}/stages`);
+        const reponseData = await sendRequest(`http://localhost:5000/etudiant/${userId}`);
+        if (reponseData.success) {
+          setUserType(reponseData.etudiant.userType);
+        } else {
+          const reponseData = await sendRequest(`http://localhost:5000/employeur/${userId}`);
+          if (reponseData.success) {
+            setUserType(reponseData.employeur.userType);
+          }
         }
-        else if(typeUser === 'etudiant'){
-          const response = await fetch(`/stages/stageId`);
-        }
-        const data = await response.json();
-        setStages(data.stages);
-      } catch (error) {
-        console.error('Erreur lors de la récupération des stages :', error);
+      } catch (err) {
+        console.log("Error fetching user data:", err);
       }
     };
 
-    
-    fetchEmployerStages();
-  }, [employerId,typeUser]);
+    if (auth.isLoggedIn) {
+      fetchUtilisateur();
+    }
+  }, [auth.isLoggedIn, userId, sendRequest]);
+    useEffect(() => {
 
- 
-  const redirectToCreateStagePage = () => {
-    history.push('/creerStage'); 
-  };
+      const fetchEmployerStages = async () => {
+        try {
+          console.log("intérieur Employeur")
+          const reponseData = await sendRequest(`http://localhost:5000/stage/getStages/${userId}`);
+          console.log(reponseData.stages.length);
+          setStages(reponseData.stages);
+
+        } catch (error) {
+          console.error('Erreur lors de la récupération des stages :', error);
+        }
+      };
+
+      if(userType == "employeur") {
+      fetchEmployerStages();
+      }
+    });
+  
+    useEffect(() => {
+
+      const fetchEtudiantStages = async () => {
+        try {
+          console.log("intérieur étudiant")
+          const reponseData = await sendRequest(`http://localhost:5000/stage/`);
+          console.log(reponseData.stages.length);
+          setStages(reponseData.stages);
+          console.log("setted");
+
+        } catch (error) {
+          console.error('Erreur lors de la récupération des stages :', error);
+        }
+      };
+
+      if(userType == "etudiant") {
+      fetchEtudiantStages();
+      }
+    });
+
+
+    console.log(stages);
+  
+
+
 
   return (
     <div>
@@ -47,16 +91,18 @@ const ListeStage = () => {
       {stages.length === 0 ? (
         <div>
           <p>Aucun stage disponible.</p>
-          <button onClick={redirectToCreateStagePage}>Créer un stage</button>
+
         </div>
       ) : (
         <ul>
           {stages.map((stage) => (
+            <div className="form-groupS">
             <li key={stage.id}>{stage.nomStage}
-            <h2>{stage.nomStage}</h2>
+              <h2>{stage.nomStage}</h2>
               <p>Nom de l'entreprise : {stage.nomEntreprise}</p>
               <p>Type de stage : {stage.typeStage}</p>
               <p>Rémunération : {stage.remuneration}</p></li>
+              </div>
           ))}
         </ul>
       )}
